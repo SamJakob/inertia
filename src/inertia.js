@@ -142,7 +142,6 @@ export default {
         }, '', page.url)
       } catch (e) {
         console.warn(`There was an error in window.history.replaceState: ${e.name}. Please make sure the data size does not exceed browser limitations.`)
-        throw e
       }
     } else {
       try {
@@ -152,7 +151,6 @@ export default {
         }, '', page.url)
       } catch (e) {
         console.warn(`There was an error in window.history.pushState: ${e.name}. Please make sure the data size does not exceed browser limitations.`)
-        throw e
       }
     }
   },
