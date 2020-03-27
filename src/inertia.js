@@ -151,7 +151,8 @@ export default {
         if (e.name == "NS_ERROR_ILLEGAL_VALUE") {
           let stateReference = UUID.v4();
           delete stateData.props;
-          sessionStorage.setItem(`_InertiaState_${stateReference}`, JSON.stringify(stateData));
+          window.sessionStorage.setItem('inertia.hardVisit', true);
+          window.sessionStorage.setItem(`_InertiaState_${stateReference}`, JSON.stringify(stateData));
           
           window.history.replaceState({
             stateFromUUID: true,
@@ -175,7 +176,8 @@ export default {
         if (e.name == "NS_ERROR_ILLEGAL_VALUE") {
           let stateReference = UUID.v4();
           delete stateData.props;
-          sessionStorage.setItem(`_InertiaState_${stateReference}`, JSON.stringify(stateData));
+          window.sessionStorage.setItem('inertia.hardVisit', true);
+          window.sessionStorage.setItem(`_InertiaState_${stateReference}`, JSON.stringify(stateData));
           
           window.history.pushState({
             stateFromUUID: true,
