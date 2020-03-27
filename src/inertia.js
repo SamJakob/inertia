@@ -146,11 +146,11 @@ export default {
       } catch (e) {
         // This issue is investigated in https://github.com/inertiajs/inertia/issues/109
         // Essentially, Firefox returns NS_ERROR_ILLEGAL_VALUE if the serialized state is
-        // greater than 640k characters, as they recommend using localStorage instead,
+        // greater than 640k characters, as they recommend using sessionStorage instead,
         // this is what I'll do.
         if (e.name == "NS_ERROR_ILLEGAL_VALUE") {
           let stateReference = UUID.v4();
-          localStorage.setItem(`_InertiaState_${stateReference}`, stateData);
+          sessionStorage.setItem(`_InertiaState_${stateReference}`, stateData);
           
           window.history.replaceState({
             stateFromUUID: true,
@@ -173,7 +173,7 @@ export default {
         // See above.
         if (e.name == "NS_ERROR_ILLEGAL_VALUE") {
           let stateReference = UUID.v4();
-          localStorage.setItem(`_InertiaState_${stateReference}`, stateData);
+          sessionStorage.setItem(`_InertiaState_${stateReference}`, stateData);
           
           window.history.pushState({
             stateFromUUID: true,
@@ -195,8 +195,8 @@ export default {
       if (event.state.stateFromUUID) {
         let stateReference = event.state.stateReference;
         
-        if (localStorage.hasOwnProperty(`_InertiaState_${stateReference}`))
-          state = localStorage.getItem(`_InertiaState_${stateReference}`);
+        if (sessionStorage.hasOwnProperty(`_InertiaState_${stateReference}`))
+          state = sessionStorage.getItem(`_InertiaState_${stateReference}`);
         else return;
       }
       
