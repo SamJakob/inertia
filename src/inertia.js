@@ -1,6 +1,7 @@
 import Axios from 'axios'
 import Modal from './modal'
 import Progress from './progress'
+import UUID from './uuid'
 
 export default {
   resolveComponent: null,
@@ -135,29 +136,71 @@ export default {
 
   setState(page, replace = false, preserveState = false) {
     if (replace || page.url === `${window.location.pathname}${window.location.search}`) {
+      let stateData = {
+        ...{ cache: preserveState && window.history.state ? window.history.state.cache : {} },
+        ...page,
+      };
+      
       try {
-        window.history.replaceState({
-          ...{ cache: preserveState && window.history.state ? window.history.state.cache : {} },
-          ...page,
-        }, '', page.url)
+        window.history.replaceState(stateData, '', page.url)
       } catch (e) {
+        // This issue is investigated in https://github.com/inertiajs/inertia/issues/109
+        // Essentially, Firefox returns NS_ERROR_ILLEGAL_VALUE if the serialized state is
+        // greater than 640k characters, as they recommend using localStorage instead,
+        // this is what I'll do.
+        if (e.name == "NS_ERROR_ILLEGAL_VALUE") {
+          let stateReference = UUID.v4();
+          localStorage.setItem(`_InertiaState_${stateReference}`, stateData);
+          
+          window.history.replaceState({
+            stateFromUUID: true,
+            stateReference
+          }, '', page.url);
+          return;
+        }
+        
         console.warn(`There was an error in window.history.replaceState: ${e.name}. Please make sure the data size does not exceed browser limitations.`)
       }
     } else {
+      let stateData = {
+        cache: {},
+        ...page,
+      };
+      
       try {
-        window.history.pushState({
-          cache: {},
-          ...page,
-        }, '', page.url)
+        window.history.pushState(stateData, '', page.url)
       } catch (e) {
+        // See above.
+        if (e.name == "NS_ERROR_ILLEGAL_VALUE") {
+          let stateReference = UUID.v4();
+          localStorage.setItem(`_InertiaState_${stateReference}`, stateData);
+          
+          window.history.pushState({
+            stateFromUUID: true,
+            stateReference
+          }, '', page.url);
+          return;
+        }
+        
         console.warn(`There was an error in window.history.pushState: ${e.name}. Please make sure the data size does not exceed browser limitations.`)
       }
+      
     }
   },
 
   restoreState(event) {
     if (event.state) {
-      this.setPage(event.state)
+      let state = event.state;
+      
+      if (event.state.stateFromUUID) {
+        let stateReference = event.state.stateReference;
+        
+        if (localStorage.hasOwnProperty(`_InertiaState_${stateReference}`))
+          state = localStorage.getItem(`_InertiaState_${stateReference}`, stateData);
+        else return;
+      }
+      
+      this.setPage(state)
     }
   },
 
