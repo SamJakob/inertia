@@ -149,16 +149,15 @@ export default {
         // greater than 640k characters, as they recommend using sessionStorage instead,
         // this is what I'll do.
         if (e.name == "NS_ERROR_ILLEGAL_VALUE") {
-          let stateReference = UUID.v4();
-          delete stateData.props;
-          window.sessionStorage.setItem('inertia.hardVisit', true);
+          // TODO: Try this with localStorage.
+          /*let stateReference = UUID.v4();
           window.sessionStorage.setItem(`_InertiaState_${stateReference}`, JSON.stringify(stateData));
           
           window.history.replaceState({
             stateFromUUID: true,
             stateReference
           }, '', page.url);
-          return;
+          return;*/
         }
         
         console.warn(`There was an error in window.history.replaceState: ${e.name}. Please make sure the data size does not exceed browser limitations.`)
@@ -174,16 +173,14 @@ export default {
       } catch (e) {
         // See above.
         if (e.name == "NS_ERROR_ILLEGAL_VALUE") {
-          let stateReference = UUID.v4();
-          delete stateData.props;
-          window.sessionStorage.setItem('inertia.hardVisit', true);
+          /*let stateReference = UUID.v4();
           window.sessionStorage.setItem(`_InertiaState_${stateReference}`, JSON.stringify(stateData));
           
           window.history.pushState({
             stateFromUUID: true,
             stateReference
           }, '', page.url);
-          return;
+          return;*/
         }
         
         console.warn(`There was an error in window.history.pushState: ${e.name}. Please make sure the data size does not exceed browser limitations.`)
@@ -196,13 +193,13 @@ export default {
     if (event.state) {
       let state = event.state;
       
-      if (event.state.stateFromUUID) {
+      /*if (event.state.stateFromUUID) {
         let stateReference = event.state.stateReference;
         
         if (sessionStorage.hasOwnProperty(`_InertiaState_${stateReference}`))
           state = JSON.parse(sessionStorage.getItem(`_InertiaState_${stateReference}`));
         else return;
-      }
+      }*/
       
       this.setPage(state)
     }
