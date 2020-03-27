@@ -196,7 +196,7 @@ export default {
         let stateReference = event.state.stateReference;
         
         if (localStorage.hasOwnProperty(`_InertiaState_${stateReference}`))
-          state = localStorage.getItem(`_InertiaState_${stateReference}`, stateData);
+          state = localStorage.getItem(`_InertiaState_${stateReference}`);
         else return;
       }
       
